@@ -1,0 +1,109 @@
+{% extends "layout.html" %}
+{% block title %}Processor Analyzer{% endblock %}
+
+{% block content %}
+<div>
+    <h2 class="text-2xl font-bold text-slate-100 mb-2">Analyze a Processor</h2>
+    <p class="text-slate-400 mb-6">Fill in the specs to predict a processor's primary function and likely wireless features using our ML model.</p>
+
+    <form action="/predict" method="post" class="space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 p-6 bg-slate-900/50 rounded-lg">
+            
+            <div>
+                <label for="designer" class="block text-sm font-medium text-slate-400 mb-2">Designer</label>
+                <select id="designer" name="designer" class="w-full bg-slate-700 border border-slate-600 rounded-md shadow-sm py-2 px-3 text-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-accent focus:border-brand-accent">
+                    {% set designers = ['Qualcomm', 'Apple', 'Samsung', 'MediaTek', 'HiSilicon', 'Other'] %}
+                    {% for d in designers %}
+                    <option value="{{ d }}" {% if form_data.get('designer') == d %}selected{% endif %}>{{ d }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label for="year_released" class="block text-sm font-medium text-slate-400 mb-2">Year Released</label>
+                <input type="number" id="year_released" name="year_released" value="{{ form_data.get('year_released', '2023') }}" required class="w-full bg-slate-700 border border-slate-600 rounded-md shadow-sm py-2 px-3 text-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-accent focus:border-brand-accent">
+            </div>
+
+            <div>
+                 <label for="num_cores" class="block text-sm font-medium text-slate-400 mb-2">Number of Cores: <span class="font-bold text-brand-accent">{{ form_data.get('num_cores', '8') }}</span></label>
+                 <input id="num_cores" name="num_cores" type="range" min="1" max="32" value="{{ form_data.get('num_cores', '8') }}" class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-brand-accent" oninput="this.previousElementSibling.querySelector('span').textContent = this.value">
+            </div>
+
+            <div>
+                 <label for="feature_size" class="block text-sm font-medium text-slate-400 mb-2">Feature Size (nm): <span class="font-bold text-brand-accent">{{ form_data.get('feature_size', '4') }}</span></label>
+                 <input id="feature_size" name="feature_size" type="range" min="1" max="28" step="1" value="{{ form_data.get('feature_size', '4') }}" class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-brand-accent" oninput="this.previousElementSibling.querySelector('span').textContent = this.value">
+            </div>
+            
+            <div class="flex items-center justify-between col-span-1 md:col-span-2 border-t border-slate-700 pt-6 mt-2">
+                <span class="text-sm font-medium text-slate-300">Has Performance Cores</span>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="hidden" name="has_performance_cores" value="0">
+                    <input type="checkbox" name="has_performance_cores" value="1" class="sr-only peer" {% if form_data.get('has_performance_cores') == '1' %}checked{% endif %}>
+                    <div class="w-11 h-6 bg-slate-600 rounded-full peer peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-offset-2 peer-focus:ring-offset-slate-900 peer-focus:ring-brand-accent peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-accent"></div>
+                </label>
+            </div>
+
+             <div class="flex items-center justify-between">
+                <span class="text-sm font-medium text-slate-300">Supports 5G</span>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="hidden" name="has_5g" value="0">
+                    <input type="checkbox" name="has_5g" value="1" class="sr-only peer" {% if form_data.get('has_5g') == '1' %}checked{% endif %}>
+                    <div class="w-11 h-6 bg-slate-600 rounded-full peer peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-offset-2 peer-focus:ring-offset-slate-900 peer-focus:ring-brand-accent peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-accent"></div>
+                </label>
+            </div>
+        </div>
+
+        <div class="mt-8 text-center">
+            <button type="submit" class="inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md shadow-lg text-white bg-gradient-to-r from-brand-primary to-brand-secondary hover:from-brand-primary hover:to-brand-primary transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 focus:ring-brand-accent">
+                Predict Features
+            </button>
+        </div>
+    </form>
+
+    {% if function_prediction %}
+    <div class="mt-8 bg-gradient-to-br from-slate-800 to-slate-900 rounded-lg p-6 shadow-lg border border-slate-700 animate-fade-in">
+      <h3 class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-sky-300 to-violet-400 mb-6">
+        ML Analysis Complete
+      </h3>
+      <div class="space-y-6">
+        <div>
+          <h4 class="text-sm font-semibold text-slate-400 uppercase tracking-wider">Predicted Function</h4>
+          <p class="text-lg text-slate-100 mt-1">{{ function_prediction }}</p>
+        </div>
+        {% if wireless_prediction is defined and wireless_prediction %}
+        <div class="border-t border-slate-700 my-4"></div>
+        <div>
+          <h4 class="text-sm font-semibold text-slate-400 uppercase tracking-wider">Predicted Wireless Capabilities</h4>
+            <ul class="list-disc list-inside text-lg text-slate-100 mt-2 space-y-1">
+            {% for feature in wireless_prediction %}
+                <li>{{ feature }}</li>
+            {% else %}
+                <li>No specific wireless features were predicted.</li>
+            {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+    {% endif %}
+
+</div>
+<script>
+    // This small, optional script updates the range slider labels without a full page reload.
+    // It is not essential for functionality but improves UX.
+    document.addEventListener('DOMContentLoaded', function() {
+        const rangeSliders = document.querySelectorAll('input[type="range"]');
+        rangeSliders.forEach(slider => {
+            const display = slider.previousElementSibling.querySelector('span');
+            if (display) {
+                // Set initial value on page load
+                display.textContent = slider.value;
+                // Add event listener for changes
+                slider.addEventListener('input', (event) => {
+                    display.textContent = event.target.value;
+                });
+            }
+        });
+    });
+</script>
+{% endblock %}

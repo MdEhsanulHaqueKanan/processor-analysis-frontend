@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}Processor Analysis Engine{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+            },
+            colors: {
+              'brand-primary': '#1e3a8a',
+              'brand-secondary': '#4338ca',
+              'brand-accent': '#0ea5e9',
+            },
+          },
+        },
+      }
+    </script>
+</head>
+<body class="bg-slate-900 text-slate-200 font-sans antialiased">
+    <div class="min-h-screen">
+        <header class="py-6 sm:py-10">
+            <div class="container mx-auto px-4 text-center">
+                <div class="flex justify-center items-center gap-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-12 h-12 text-brand-accent">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 3v1.5M4.5 8.25H3m18 0h-1.5M4.5 12H3m18 0h-1.5m-15 3.75H3m1.5-7.5h15M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-5.25 6.375v1.5m-1.5-18v1.5m1.5 15h-1.5m10.5-1.5h-1.5m-1.5 0v-1.5m-6 0v1.5m-1.5-1.5h-1.5" />
+                    </svg>
+                    <h1 class="text-4xl sm:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-brand-accent to-violet-500">
+                        Processor Analysis Engine
+                    </h1>
+                </div>
+                <p class="mt-4 text-lg text-slate-400 max-w-2xl mx-auto">
+                    A decision-support tool to analyze and select the perfect processor for your next-gen smart devices.
+                </p>
+            </div>
+        </header>
+        
+        <main class="container mx-auto px-4 py-8">
+            <div class="bg-slate-800/50 backdrop-blur-sm rounded-xl shadow-2xl p-6 sm:p-8">
+                <div class="mb-8 border-b border-slate-700">
+                    <nav class="-mb-px flex space-x-6" aria-label="Tabs">
+                        <a href="{{ url_for('main.index') }}" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-brand-accent rounded-t-sm
+                            {% if request.path == url_for('main.index') %}
+                                border-brand-accent text-brand-accent
+                            {% else %}
+                                border-transparent text-slate-400 hover:text-slate-200 hover:border-slate-500
+                            {% endif %}">
+                            Recommendation Engine
+                        </a>
+                        <a href="{{ url_for('main.predict') }}" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-brand-accent rounded-t-sm
+                            {% if request.path == url_for('main.predict') %}
+                                border-brand-accent text-brand-accent
+                            {% else %}
+                                border-transparent text-slate-400 hover:text-slate-200 hover:border-slate-500
+                            {% endif %}">
+                            Processor Analyzer
+                        </a>
+                    </nav>
+                </div>
+
+                <div>
+                    {% block content %}{% endblock %}
+                </div>
+            </div>
+        </main>
+    </div>
+    <footer class="text-center py-6 text-slate-500 text-sm">
+        Processor Analysis Engine &copy; {{ now().year }}
+    </footer>
+</body>
+</html>

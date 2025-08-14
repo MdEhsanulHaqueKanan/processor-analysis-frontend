@@ -1,0 +1,107 @@
+{% extends "layout.html" %}
+{% block title %}Processor Recommendation Engine{% endblock %}
+
+{% block content %}
+<div>
+    <h2 class="text-2xl font-bold text-slate-100 mb-6">Filter Processors</h2>
+    <form action="/" method="post">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8 p-6 bg-slate-900/50 rounded-lg">
+            <!-- Designer -->
+            <div>
+                <label for="designer" class="block text-sm font-medium text-slate-400 mb-2">Designer</label>
+                <input type="text" name="designer" id="designer" value="{{ form_data.get('designer', '') }}" placeholder="e.g., Qualcomm, Apple"
+                    class="w-full bg-slate-700 border border-slate-600 rounded-md shadow-sm py-2 px-3 text-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-accent focus:border-brand-accent">
+            </div>
+
+            <!-- Release Year -->
+            <div>
+                <label for="min_year" class="block text-sm font-medium text-slate-400 mb-2">Release Year</label>
+                <div class="flex items-center space-x-2">
+                    <input type="number" name="min_year" id="min_year" value="{{ form_data.get('min_year', '') }}" placeholder="Min"
+                        class="w-full bg-slate-700 border border-slate-600 rounded-md shadow-sm py-2 px-3 text-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-accent focus:border-brand-accent">
+                    <span class="text-slate-500">-</span>
+                    <input type="number" name="max_year" value="{{ form_data.get('max_year', '') }}" placeholder="Max"
+                        class="w-full bg-slate-700 border border-slate-600 rounded-md shadow-sm py-2 px-3 text-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-accent focus:border-brand-accent"
+                        aria-label="Maximum Year Released">
+                </div>
+            </div>
+
+            <!-- Cores -->
+            <div>
+                <label for="min_cores" class="block text-sm font-medium text-slate-400 mb-2">Number of Cores</label>
+                <div class="flex items-center space-x-2">
+                    <input type="number" name="min_cores" id="min_cores" value="{{ form_data.get('min_cores', '') }}" placeholder="Min"
+                        class="w-full bg-slate-700 border border-slate-600 rounded-md shadow-sm py-2 px-3 text-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-accent focus:border-brand-accent">
+                    <span class="text-slate-500">-</span>
+                    <input type="number" name="max_cores" value="{{ form_data.get('max_cores', '') }}" placeholder="Max"
+                        class="w-full bg-slate-700 border border-slate-600 rounded-md shadow-sm py-2 px-3 text-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-accent focus:border-brand-accent"
+                        aria-label="Maximum Number of Cores">
+                </div>
+            </div>
+
+            <!-- Toggles -->
+            <div class="md:col-span-2 lg:col-span-3 flex items-center justify-center gap-6 flex-wrap pt-4">
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" name="needs_5g" value="true" class="sr-only peer" {% if form_data.get('needs_5g')=='true' %}checked{% endif %}>
+                    <div class="w-11 h-6 bg-slate-600 rounded-full peer peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-offset-2 peer-focus:ring-offset-slate-900 peer-focus:ring-brand-accent peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-accent"></div>
+                    <span class="ml-3 text-sm font-medium text-slate-300">Needs 5G</span>
+                </label>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" name="needs_wifi_6" value="true" class="sr-only peer" {% if form_data.get('needs_wifi_6')=='true' %}checked{% endif %}>
+                    <div class="w-11 h-6 bg-slate-600 rounded-full peer peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-offset-2 peer-focus:ring-offset-slate-900 peer-focus:ring-brand-accent peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-accent"></div>
+                    <span class="ml-3 text-sm font-medium text-slate-300">Needs Wi-Fi 6/6E</span>
+                </label>
+            </div>
+        </div>
+
+        <div class="mt-4 text-center">
+            <button type="submit" class="inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md shadow-lg text-white bg-gradient-to-r from-brand-primary to-brand-secondary hover:from-brand-primary hover:to-brand-primary disabled:opacity-50 transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 focus:ring-brand-accent">
+                Find Processors
+            </button>
+        </div>
+    </form>
+
+    {% if request.method == 'POST' %}
+    <div class="border-t border-slate-700 pt-8 mt-12">
+        <h3 class="text-xl font-bold text-slate-100 mb-6">
+            {{ recommendations|length }} Processor{% if recommendations|length != 1 %}s{% endif %} Found
+        </h3>
+        {% if recommendations %}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {% for proc in recommendations %}
+            <div class="bg-slate-800/70 border border-slate-700 rounded-lg shadow-lg hover:shadow-brand-accent/30 hover:border-brand-accent/50 transition-all duration-300 p-5 flex flex-col justify-between transform hover:-translate-y-1">
+                <div>
+                    <div class="flex justify-between items-start">
+                        <p class="text-xs font-semibold uppercase tracking-wider text-brand-accent">{{ proc.Designer }}</p>
+                        <span class="text-xs font-medium text-slate-400">{{ proc.release_year | int }}</span>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-100 mt-2 truncate" title="{{ proc.series }}">{{ proc.series }}</h3>
+                    <p class="text-sm text-slate-400">{{ proc.type }}</p>
+                </div>
+                <div class="mt-4 pt-4 border-t border-slate-700/50 space-y-3 text-sm">
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-400">Cores</span>
+                        <span class="font-semibold">{{ proc.cores | int }}</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-400">Feature Size</span>
+                        <span class="font-semibold">{{ proc.feature_size }} nm</span>
+                    </div>
+                    <div class="flex items-center justify-between text-left">
+                        <span class="text-slate-400">Function</span>
+                        <span class="font-semibold text-right">{{ proc.function }}</span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-16 px-6 bg-slate-800 rounded-lg">
+            <h4 class="text-xl font-medium text-slate-300">No Processors Match Your Criteria</h4>
+            <p class="text-slate-400 mt-2">Try adjusting your filters to find more results.</p>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

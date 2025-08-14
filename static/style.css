@@ -1,0 +1,48 @@
+/* 
+  This file can be used for custom styles that are difficult to apply
+  with Tailwind's utility-first approach directly in the HTML,
+  such as complex animations or targeting pseudo-elements for specific looks.
+*/
+
+/* Custom style for range input thumbs to match the brand accent color */
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background: #0ea5e9; /* brand-accent */
+  cursor: pointer;
+  border-radius: 50%;
+  border: 2px solid white;
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  background: #0ea5e9; /* brand-accent */
+  cursor: pointer;
+  border-radius: 50%;
+  border: 2px solid white;
+}
+
+/* A simple fade-in animation for the results box */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+/* Hide number input spinners in Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Hide number input spinners in Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}

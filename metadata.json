@@ -1,0 +1,5 @@
+{
+  "name": "Processor Recommendation & Analysis Engine",
+  "description": "A web-based decision-support tool to help engineers and product teams analyze and select processors for smart devices. It features a rule-based recommendation engine and an AI-powered processor analyzer.",
+  "requestFramePermissions": []
+}
