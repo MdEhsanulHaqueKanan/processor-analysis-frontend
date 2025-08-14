@@ -9,6 +9,12 @@
       "DOM",
       "DOM.Iterable"
     ],
+    
+    // --- THIS IS THE FIX ---
+    // This line tells TypeScript about Vite's special environment variables.
+    "types": ["vite/client", "node"],
+    // ----------------------
+
     "skipLibCheck": true,
     "moduleResolution": "bundler",
     "isolatedModules": true,

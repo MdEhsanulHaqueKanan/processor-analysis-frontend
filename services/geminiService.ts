@@ -1,32 +1,31 @@
-// services/geminiService.ts (Corrected Final Version)
+// services/geminiService.ts (Final Production-Ready Version)
 
 // First, import all the types we need from the central types file.
 import type { FilterCriteria, Processor, AnalysisInput, AnalysisResult } from '../types';
 
-// THIS IS THE CRUCIAL FIX: Re-export the types so other files can import them from this service.
+// Re-export the types so other files can import them from this service.
 export type { FilterCriteria, Processor, AnalysisInput, AnalysisResult };
 
-// --- API Endpoints ---
-const PREDICT_API_URL = 'http://127.0.0.1:5000/api/predict';
-const RECOMMEND_API_URL = 'http://127.0.0.1:5000/api/recommend';
-
-
 // ====================================================================
+// --- THIS IS THE FINAL, CORRECTED API URL LOGIC ---
+// ====================================================================
+// This will use the Vercel environment variable when deployed, 
+// and fallback to your local URL when running on your PC.
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:5000';
+
+const PREDICT_API_URL = `${API_BASE_URL}/api/predict`;
+const RECOMMEND_API_URL = `${API_BASE_URL}/api/recommend`;
+// ====================================================================
+
+
 // --- Function for the AI Processor Analyzer ---
-// ====================================================================
-
-/**
- * This function sends processor specifications to your local Flask backend for analysis.
- */
 export async function analyzeProcessor(input: AnalysisInput): Promise<AnalysisResult> {
     console.log("Sending data to Flask backend for prediction:", input);
 
     try {
         const response = await fetch(PREDICT_API_URL, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(input),
         });
 
@@ -51,17 +50,10 @@ export async function analyzeProcessor(input: AnalysisInput): Promise<AnalysisRe
 }
 
 
-// ====================================================================
 // --- Function for the Recommendation Engine ---
-// ====================================================================
-
-/**
- * This function sends filter criteria to your Flask backend and fetches a list of recommended processors.
- */
 export async function getRecommendations(filters: FilterCriteria): Promise<Processor[]> {
     console.log("Requesting recommendations with filters:", filters);
 
-    // Translate frontend filter names to the names your Python backend expects.
     const payload = {
         designer: filters.designer,
         min_year: filters.releaseYearRange[0],
@@ -74,9 +66,7 @@ export async function getRecommendations(filters: FilterCriteria): Promise<Proce
     try {
         const response = await fetch(RECOMMEND_API_URL, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload),
         });
 
