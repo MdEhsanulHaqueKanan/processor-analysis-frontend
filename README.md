@@ -18,7 +18,7 @@
 This repository contains the **React frontend** for the AI-powered Processor Analysis Engine. It provides a modern, interactive, and user-friendly interface for two key features:
 
 1.  **Recommendation Engine:** Allows users to dynamically filter a large dataset of processors based on criteria like manufacturer, release year, and core count.
-2.  **AI Processor Analyzer:** Enables users to input custom processor specifications and receive real-time predictions about its function and capabilities from a custom-trained machine learning model.
+2.  **AI Processor Analyzer:** Enables users to input custom processor specifications and receive real-time predictions about its function and capabilities from a **custom-trained machine learning model**, which was built from the ground up including all data engineering and feature creation.
 
 This application is built as a **headless frontend** using React and Vite, and it consumes data exclusively from its dedicated [Flask REST API backend](https://github.com/MdEhsanulHaqueKanan/processor-recommendation-api).
 
